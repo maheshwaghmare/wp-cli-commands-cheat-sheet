@@ -1,6 +1,5 @@
 <?php
-
-add_action( 'admin_head', function(  ) {
+add_action( 'init', function(  ) {
 
 	$commands_manifest = 'https://raw.githubusercontent.com/wp-cli/handbook/master/bin/commands-manifest.json';
 
@@ -56,35 +55,44 @@ add_action( 'admin_head', function(  ) {
 		// }
 		// echo $value['title'] . '<br/>';
 	}	
-	vl( $docs );
+	// vl( $docs );
 	
-	echo '<table>';
+
+	header("Pragma: public");
+	header("Expires: 0");
+	header("Cache-Control: must-revalidate, post-check=0, pre-check=0"); 
+	header("Content-Type: application/force-download");
+	header("Content-Type: application/octet-stream");
+	header("Content-Type: application/download");
+	header("Content-Disposition: attachment;filename=wp-cli-commands-list.html ");
+	header("Content-Transfer-Encoding: binary ");
+
+	$data = '<table>';
 	foreach ($docs as $comment => $subcommands)
 	{
-		echo '<tr><th colspan="2">'.ucwords($comment).'</th></tr>';
+		$data .= '<tr><th colspan="2">'.ucwords($comment).'</th></tr>';
 
 		$i = 1;
 		foreach ($subcommands as $k => $v) {
-			echo '<tr>';
-			echo '<td>';
-			echo $i;
-			echo '</td>';
-			echo '<td>';
-			echo 'wp ' . $v['title'];
-			echo '</td>';
-			echo '<td>';
-			echo '<a href="'.$value['markdown_source'].'">Docs</a>';
-			echo ' | ';
-			echo '<a href="'.$value['repo_url'].'">Git</a>';
-			echo '</td>';
-			echo '</tr>';
+			$data .= '<tr>';
+			// $data .= '<td>';
+			// $data .= $i;
+			// $data .= '</td>';
+			$data .= '<td style="padding: 0px 8px;">';
+			$data .= 'wp ' . $v['title'];
+			$data .= '</td>';
+			$data .= '<td style="padding: 0px 8px;">';
+			$data .= '<a style="box-shadow: none;" href="'.$value['markdown_source'].'">Docs</a>';
+			$data .= ' | ';
+			$data .= '<a style="box-shadow: none;" href="'.$value['repo_url'].'">Git</a>';
+			$data .= '</td>';
+			$data .= '</tr>';
 			
 			$i++;
 		}
 	}
-	echo '</table>';
+	$data .= '</table>';
 
-	
-	wp_die();
+	echo $data;
+	exit();
 } );
-	
